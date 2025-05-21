@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Broadband Service App</title>
-</head>
+{% block title %}Broadband Service App{% endblock %}
 
-<body>
-    <h1>Welcome to Broadband Service App</h1>
-    <a href="{{ url_for('register') }}">Register</a> |
-    <a href="{{ url_for('login') }}">Login</a>
-</body>
-
-</html>
+{% block content %}
+<h1>Welcome to Broadband Service App</h1>
+{% if user %}
+<p>Hello, {{ user.username }}!</p>
+<a href="{{ url_for('profile') }}">View Profile</a> |
+<a href="{{ url_for('logout') }}">Logout</a>
+{% else %}
+<p>Please <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">Register</a> to
+    continue.</p>
+{% endif %}
+{% endblock %}

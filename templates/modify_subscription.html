@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modify Subscription</title>
+</head>
+
+<body>
+    <h1>Modify Subscription</h1>
+    <form method="POST">
+        <label>Select Subscription:</label>
+        <select name="subscription_id" required>
+            {% for subscription in subscriptions %}
+            <option value="{{ subscription.id }}">Plan ID: {{ subscription.plan_id }} (Ends on {{ subscription.end_date
+                }})</option>
+            {% endfor %}
+        </select><br>
+        <label>New Plan ID:</label>
+        <input type="text" name="plan_id" required><br>
+        <button type="submit">Modify</button>
+    </form>
+    <a href="{{ url_for('profile') }}">Back to Profile</a>
+</body>
+
+</html>
