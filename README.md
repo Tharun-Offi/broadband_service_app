@@ -164,26 +164,50 @@ http://127.0.0.1:5000/
 
 We welcome contributions from the community!
 
-1. **Fork the repository**
-2. **Create a feature branch**
+### How to Contribute
+
+1. **Fork the repository**  
+   Click the "Fork" button at the top right of the [GitHub repository page](https://github.com/yourusername/broadband-service-app) to create your own copy.
+
+2. **Clone your forked repository**
+
+```bash
+git clone https://github.com/<your-github-username>/broadband-service-app.git
+cd broadband-service-app
+```
+
+3. **Create a feature branch**
 
 ```bash
 git checkout -b feature/your-feature
 ```
 
-3. **Commit your changes**
+4. **Make your changes and commit**
 
 ```bash
+git add .
 git commit -m "Add your feature"
 ```
 
-4. **Push to your branch**
+5. **Push to your fork**
 
 ```bash
 git push origin feature/your-feature
 ```
 
-5. **Open a Pull Request**
+6. **Open a Pull Request**  
+   Go to your forked repository on GitHub, switch to your feature branch, and click "New Pull Request" to submit your changes for review.
+
+### Keeping Your Fork Up To Date
+
+To keep your fork in sync with the original repository:
+
+```bash
+git remote add upstream https://github.com/yourusername/broadband-service-app.git
+git fetch upstream
+git checkout main
+git merge upstream/main
+```
 
 Please follow PEP8 and include docstrings where applicable.
 
