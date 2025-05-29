@@ -4,12 +4,79 @@
 
 {% block content %}
 <h1>Welcome to Broadband Service App</h1>
+
 {% if user %}
 <p>Hello, {{ user.username }}!</p>
 <a href="{{ url_for('profile') }}">View Profile</a> |
 <a href="{{ url_for('logout') }}">Logout</a>
 {% else %}
-<p>Please <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">Register</a> to
-    continue.</p>
+<p>Please <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">Register</a> to continue.
+</p>
 {% endif %}
+
+<h2>Available Plans</h2>
+<div class="plans">
+    {% for plan in plans %}
+    <div class="plan">
+        <div class="pack-container">
+            <div class="header">
+                <p class="title">
+                    {{plan.name}}
+                </p>
+                <div class="price-container">
+                    <span>₹</span>{{plan.price}}
+                    <span>/mo</span>
+                </div>
+            </div>
+            <div>
+                <ul class="lists">
+                    <li class="list">
+                        <span>
+                            <svg aria-hidden="true" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.5 12.75l6 6 9-13.5" stroke-linejoin="round" stroke-linecap="round"></path>
+                            </svg>
+                        </span>
+                        <p>
+                            {{plan.speed}} Mbps
+                        </p>
+                    </li>
+                    <li class="list">
+                        <span>
+                            <svg aria-hidden="true" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.5 12.75l6 6 9-13.5" stroke-linejoin="round" stroke-linecap="round"></path>
+                            </svg>
+                        </span>
+                        <p>
+                            {{plan.data_limit}} GB
+                        </p>
+                    </li>
+                    <li class="list">
+                        <span>
+                            <svg aria-hidden="true" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.5 12.75l6 6 9-13.5" stroke-linejoin="round" stroke-linecap="round"></path>
+                            </svg>
+                        </span>
+                        <p>
+                            {% if plan.offer %}
+                            {{plan.offer}}
+                            {% else %}
+                            No Offer
+                            {% endif %}
+                        </p>
+                    </li>
+                </ul>
+            </div>
+            <div class="button-container">
+                <form method="POST" action="{{ url_for('apply_subscription') }}">
+                    <input type="hidden" name="plan_id" value="{{ plan.id }}">
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

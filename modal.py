@@ -7,8 +7,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-    phone_number = db.Column(db.String(10), nullable=False)
-    email = db.Column(db.String(100), nullable=False)
+    phone_number = db.Column(db.String(10), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
     address = db.Column(db.Text, nullable=False)
 
     def __init__(self, username, password, phone_number, email, address):
@@ -54,3 +54,27 @@ class Feedback(db.Model):
         self.user_id = user_id
         self.description = description
         self.rating = rating
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+class Plan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    speed = db.Column(db.Integer, nullable=False)
+    data_limit = db.Column(db.Integer, nullable=False)
+    offer = db.Column(db.String(255), nullable=True)  # New field for offers
+
+    def __init__(self, name, price, speed, data_limit, offer=None):
+        self.name = name
+        self.price = price
+        self.speed = speed
+        self.data_limit = data_limit
+        self.offer = offer

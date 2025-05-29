@@ -1,32 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-</head>
+{% block title %}New User{% endblock %}
 
-<body>
-    <h1>Register</h1>
-    <form method="POST">
-        <label>Username:</label>
-        <input type="text" name="username" required><br>
-        <label>Password:</label>
-        <input type="password" name="password" required><br>
-        <label>Phone Number:</label>
-        <input type="text" name="phone_number" required><br>
-        <label>Email:</label>
-        <input type="email" name="email" required><br>
-        <label>Address:</label><br>
-        <input type="text" name="door" placeholder="Door Number" required><br>
-        <input type="text" name="street" placeholder="Street Name" required><br>
-        <input type="text" name="area" placeholder="Area" required><br>
-        <input type="text" name="city" placeholder="City" required><br>
-        <input type="text" name="pincode" placeholder="Postal Code" required><br>
-        <button type="submit">Register</button>
-    </form>
+{% block content %}
+<form method="POST">
+    <h1>Signup to Continue</h1>
+    <label>Username:</label>
+    <input type="text" name="username" required><br>
+    <label>Password:</label>
+    <input type="password" name="password" id="password" required>
+    <div class="password-strength" id="password-strength"></div>
+    <label>Phone Number:</label>
+    <input type="text" name="phone_number" required><br>
+    <label>Email:</label>
+    <input type="email" name="email" required><br>
+    <label>Address:</label><br>
+    <input type="text" name="door" class="address" placeholder="Door Number" required><br>
+    <input type="text" name="street" class="address" placeholder="Street Name" required><br>
+    <input type="text" name="area" class="address" placeholder="Area" required><br>
+    <input type="text" name="city" class="address" placeholder="City" required><br>
+    <input type="text" name="pincode" class="address" placeholder="Postal Code" required><br>
+    <button type="submit">Register</button>
     <a href="{{ url_for('home') }}">Back to Home</a>
-</body>
+</form>
+<script>
+    const passwordInput = document.getElementById('password');
+    const strengthIndicator = document.getElementById('password-strength');
 
-</html>
+    passwordInput.addEventListener('input', () => {
+        const value = passwordInput.value;
+        if (value.length < 6) {
+            strengthIndicator.className = 'password-strength weak';
+        } else if (value.length < 10) {
+            strengthIndicator.className = 'password-strength medium';
+        } else {
+            strengthIndicator.className = 'password-strength strong';
+        }
+    });
+</script>
+{% endblock %}

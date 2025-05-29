@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<h1>User Profile</h1>
+<div class="profile">
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Address:</strong> {{ user.address }}</p>
+</div>
+{% if is_admin %}
+<a href="{{ url_for('admin_dashboard') }}" class="button">Go to Admin Dashboard</a>
+{% endif %}
+<a href="{{ url_for('logout') }}" class="button">Logout</a>
+{% endblock %}

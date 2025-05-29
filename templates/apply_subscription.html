@@ -1,20 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apply Subscription</title>
-</head>
+{% block title %}Apply Subscription{% endblock %}
 
-<body>
-    <h1>Apply New Subscription</h1>
-    <form method="POST">
-        <label>Plan ID:</label>
-        <input type="text" name="plan_id" required><br>
-        <button type="submit">Apply</button>
-    </form>
-    <a href="{{ url_for('profile') }}">Back to Profile</a>
-</body>
-
-</html>
+{% block content %}
+<h1>Apply New Subscription</h1>
+<form method="POST">
+    <label>Plan ID:</label>
+    <input type="text" name="plan_id" required><br>
+    <button type="submit">Apply</button>
+</form>
+<a href="{{ url_for('profile') }}">Back to Profile</a>
+{% endblock %}

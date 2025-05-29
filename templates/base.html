@@ -4,22 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}Broadband Service App{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://kit.fontawesome.com/d28415ff34.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/search.js') }}" defer></script>
 </head>
 
 <body>
     <header>
         <div class="nav">
             <div class="head">
-                <img src="" alt="LOGO">
+                <a href="{{ url_for('home') }}">Broadband Service</a>
             </div>
             <div class="menu">
                 <ul>
                     <li><a href="{{ url_for('home') }}">Home</a></li>
-                    {% if user %}
+                    {% if session.get('user_id') %}
                     <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% elif session.get('admin_id') %}
+                    {% if Admin.query.get(session['admin_id']).username != 'admin' %}
+                    <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                    <li><a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a></li>
+                    {% endif %}
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% else %}
                     <li><a href="{{ url_for('login') }}">Login</a></li>

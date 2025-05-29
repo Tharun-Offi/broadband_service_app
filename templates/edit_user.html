@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+<h1>Edit User</h1>
+<form method="POST">
+    <label>Phone Number:</label>
+    <input type="text" name="phone_number" value="{{ user.phone_number }}" required>
+    <label>Email:</label>
+    <input type="email" name="email" value="{{ user.email }}" required>
+    <label>Address:</label>
+    <textarea name="address" required>{{ user.address }}</textarea>
+    <button type="submit">Save Changes</button>
+</form>
+{% endblock %}

@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modify Subscription</title>
-</head>
+{% block title %}Modify Subscription{% endblock %}
 
-<body>
+{% block content %}
     <h1>Modify Subscription</h1>
     <form method="POST">
         <label>Select Subscription:</label>
@@ -22,6 +17,4 @@
         <button type="submit">Modify</button>
     </form>
     <a href="{{ url_for('profile') }}">Back to Profile</a>
-</body>
-
-</html>
+{% endblock %}

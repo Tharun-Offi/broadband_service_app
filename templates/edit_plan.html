@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Plan{% endblock %}
+
+{% block content %}
+<h1>Edit Plan</h1>
+<form method="POST">
+    <label>Plan Name:</label>
+    <input type="text" name="name" value="{{ plan.name }}" required>
+    <label>Price:</label>
+    <input type="number" name="price" step="0.01" value="{{ plan.price }}" required>
+    <label>Speed (Mbps):</label>
+    <input type="number" name="speed" value="{{ plan.speed }}" required>
+    <label>Data Limit (GB):</label>
+    <input type="number" name="data_limit" value="{{ plan.data_limit }}" required>
+    <label>Offer (Optional):</label>
+    <input type="text" name="offer" value="{{ plan.offer }}">
+    <button type="submit">Save Changes</button>
+</form>
+{% endblock %}
