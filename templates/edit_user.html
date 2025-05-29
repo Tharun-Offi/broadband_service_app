@@ -5,12 +5,13 @@
 {% block content %}
 <h1>Edit User</h1>
 <form method="POST">
-    <label>Phone Number:</label>
-    <input type="text" name="phone_number" value="{{ user.phone_number }}" required>
-    <label>Email:</label>
-    <input type="email" name="email" value="{{ user.email }}" required>
-    <label>Address:</label>
-    <textarea name="address" required>{{ user.address }}</textarea>
+    <label for="phone_number">Phone Number:</label>
+    <input type="text" name="phone_number" id="phone_number" value="{{ user.phone_number }}" required>
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" value="{{ user.email }}" required>
+    <label for="address">Address:</label>
+    <textarea name="address" id="address" required>{{ user.address }}</textarea>
     <button type="submit">Save Changes</button>
 </form>
+<a href="{{ url_for('admin_user_subscriptions', user_id=user.id) }}" class="button">View/Edit Subscribed Plans</a>
 {% endblock %}

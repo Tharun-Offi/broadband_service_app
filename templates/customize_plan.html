@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Customize Plan{% endblock %}
+{% block content %}
+<h1>Customize Plan</h1>
+<form method="POST">
+    <label for="name">Plan Name:</label>
+    <input type="text" name="name" id="name" value="{{ plan.name }}" required>
+    <label for="price">Price:</label>
+    <input type="number" name="price" id="price" value="{{ plan.price }}" required>
+    <label for="speed">Speed (Mbps):</label>
+    <input type="number" name="speed" id="speed" value="{{ plan.speed }}" required>
+    <label for="data_limit">Data Limit (GB):</label>
+    <input type="number" name="data_limit" id="data_limit" value="{{ plan.data_limit }}" required>
+    <label for="offer">Offer:</label>
+    <input type="text" name="offer" id="offer" value="{{ plan.offer }}">
+    <button type="submit">Save Customization</button>
+</form>
+{% endblock %}

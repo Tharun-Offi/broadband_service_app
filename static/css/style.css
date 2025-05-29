@@ -17,6 +17,10 @@
     text-decoration: none;
 }
 
+* a {
+    color: var(--primary-color);
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -285,14 +289,14 @@ main {
     background-color: var(--quaternary-color);
 }
 
-form {
+.form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-width: 500px;
+    width: 40%;
     min-height: 400px;
-    max-width: 90%;
+    max-width: 600px;
     max-height: 90%;
     padding: 1.5rem;
     background-color: rgba(255, 255, 255, 0.8);
@@ -334,7 +338,7 @@ form button {
     color: white;
     font-size: 1rem;
     cursor: pointer;
-    margin-top: 1rem;
+    margin: 1rem 0;
     transition: background-color 0.3s ease-in-out;
 }
 

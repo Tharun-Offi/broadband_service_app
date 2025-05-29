@@ -29,9 +29,13 @@ def home():
         admin = Admin.query.get(session['admin_id'])
         if admin.username == 'admin':  # Default admin
             return redirect(url_for('admin_dashboard'))
-        else:  # Promoted admin
+        else:  # Promoted admin acts as user
             user = User.query.filter_by(username=admin.username).first()
-            return render_template('home.html', user=user, plans=plans, is_admin=True)
+            if user:
+                session['user_id'] = user.id  # Allow promoted admin to use user functions
+                return render_template('home.html', user=user, plans=plans, is_admin=True)
+            else:
+                return render_template('home.html', user=None, plans=plans)
     return render_template('home.html', user=None, plans=plans)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -66,6 +70,10 @@ def login():
         admin = Admin.query.filter_by(username=username, password=password).first()
         if admin:
             session['admin_id'] = admin.id
+            # For promoted admin, also set user_id if user exists
+            user = User.query.filter_by(username=admin.username).first()
+            if admin.username != 'admin' and user:
+                session['user_id'] = user.id
             flash('Admin login successful!', 'success')
             return redirect(url_for('admin_dashboard'))
 
@@ -156,17 +164,101 @@ def apply_subscription():
     if request.method == 'POST':
         user_id = session['user_id']
         plan_id = request.form['plan_id']
-        # Prevent duplicate subscriptions for the same plan
-        existing = Subscription.query.filter_by(user_id=user_id, plan_id=plan_id).first()
-        if existing:
-            flash('You have already subscribed to this plan!', 'info')
-        else:
-            new_subscription = Subscription(user_id=user_id, plan_id=plan_id)
-            db.session.add(new_subscription)
-            db.session.commit()
-            flash('New subscription applied successfully!', 'success')
-        return redirect(url_for('profile'))
+        # Allow subscribing to the same plan multiple times (remove duplicate check)
+        new_subscription = Subscription(user_id=user_id, plan_id=plan_id)
+        db.session.add(new_subscription)
+        db.session.commit()
+        flash('New subscription applied successfully!', 'success')
+        return redirect(url_for('subscriptions'))
     return render_template('apply_subscription.html')
+
+@app.route('/subscriptions')
+def subscriptions():
+    if 'user_id' not in session:
+        flash('Please log in first!', 'warning')
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+    # Fetch all subscriptions for the user
+    subs = Subscription.query.filter_by(user_id=user_id).all()
+    # Ensure plan_id is stored as integer for matching with Plan.id
+    plans = Plan.query.all()
+    # Convert plan_id to int for all subscriptions if needed
+    for sub in subs:
+        try:
+            sub.plan_id = int(sub.plan_id)
+        except Exception:
+            pass
+    return render_template('subscriptions.html', subscriptions=subs, plans=plans)
+
+@app.route('/subscriptions/edit/<int:subscription_id>', methods=['GET', 'POST'])
+def edit_subscription(subscription_id):
+    if 'user_id' not in session:
+        flash('Please log in first!', 'warning')
+        return redirect(url_for('login'))
+    subscription = Subscription.query.get(subscription_id)
+    if not subscription or subscription.user_id != session['user_id']:
+        flash('Unauthorized access!', 'danger')
+        return redirect(url_for('subscriptions'))
+    plans = Plan.query.all()
+    if request.method == 'POST':
+        new_plan_id = request.form['plan_id']
+        subscription.plan_id = new_plan_id
+        subscription.start_date = date.today()
+        subscription.end_date = date.today() + timedelta(days=30)
+        db.session.commit()
+        flash('Subscription updated!', 'success')
+        return redirect(url_for('subscriptions'))
+    return render_template('edit_subscription.html', subscription=subscription, plans=plans)
+
+@app.route('/subscriptions/delete/<int:subscription_id>', methods=['POST'])
+def delete_subscription(subscription_id):
+    if 'user_id' not in session:
+        flash('Please log in first!', 'warning')
+        return redirect(url_for('login'))
+    subscription = Subscription.query.get(subscription_id)
+    if not subscription or subscription.user_id != session['user_id']:
+        flash('Unauthorized access!', 'danger')
+        return redirect(url_for('subscriptions'))
+    db.session.delete(subscription)
+    db.session.commit()
+    flash('Subscription deleted successfully!', 'success')
+    return redirect(url_for('subscriptions'))
+
+@app.route('/admin/user_subscriptions/<int:user_id>')
+def admin_user_subscriptions(user_id):
+    if 'admin_id' not in session:
+        flash('Please log in as admin first!', 'warning')
+        return redirect(url_for('admin_dashboard'))
+    subs = Subscription.query.filter_by(user_id=user_id).all()
+    user = User.query.get(user_id)
+    plans = Plan.query.all()
+    # Ensure plan_id is int for all subscriptions (for Jinja selectattr to work)
+    for sub in subs:
+        try:
+            sub.plan_id = int(sub.plan_id)
+        except Exception:
+            pass
+    return render_template('admin_user_subscriptions.html', subscriptions=subs, user=user, plans=plans)
+
+@app.route('/admin/edit_user_subscription/<int:subscription_id>', methods=['GET', 'POST'])
+def admin_edit_user_subscription(subscription_id):
+    if 'admin_id' not in session:
+        flash('Please log in as admin first!', 'warning')
+        return redirect(url_for('admin_dashboard'))
+    subscription = Subscription.query.get(subscription_id)
+    if not subscription:
+        flash('Subscription not found!', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    plans = Plan.query.all()
+    if request.method == 'POST':
+        new_plan_id = request.form['plan_id']
+        subscription.plan_id = new_plan_id
+        subscription.start_date = date.today()
+        subscription.end_date = date.today() + timedelta(days=30)
+        db.session.commit()
+        flash('User subscription updated!', 'success')
+        return redirect(url_for('admin_user_subscriptions', user_id=subscription.user_id))
+    return render_template('admin_edit_user_subscription.html', subscription=subscription, plans=plans)
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
@@ -326,6 +418,51 @@ def demote_from_admin(user_id):
     else:
         flash('User not found!', 'danger')
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/customize_plan/<int:plan_id>', methods=['GET', 'POST'])
+def customize_plan(plan_id):
+    if 'admin_id' not in session:
+        flash('Please log in as admin first!', 'warning')
+        return redirect(url_for('admin_login'))
+    plan = Plan.query.get(plan_id)
+    if not plan:
+        flash('Plan not found!', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    if request.method == 'POST':
+        plan.name = request.form['name']
+        plan.price = request.form['price']
+        plan.speed = request.form['speed']
+        plan.data_limit = request.form['data_limit']
+        plan.offer = request.form.get('offer', '')
+        db.session.commit()
+        flash('Plan customized successfully!', 'success')
+        return redirect(url_for('admin_dashboard'))
+    return render_template('customize_plan.html', plan=plan)
+
+@app.route('/admin/customize_user_subscription/<int:subscription_id>', methods=['GET', 'POST'])
+def customize_user_subscription(subscription_id):
+    if 'admin_id' not in session:
+        flash('Please log in as admin first!', 'warning')
+        return redirect(url_for('admin_dashboard'))
+    subscription = Subscription.query.get(subscription_id)
+    if not subscription:
+        flash('Subscription not found!', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    plan = Plan.query.get(subscription.plan_id)
+    user = User.query.get(subscription.user_id)
+    if not plan:
+        flash('Plan not found!', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    if request.method == 'POST':
+        plan.name = request.form['name']
+        plan.price = request.form['price']
+        plan.speed = request.form['speed']
+        plan.data_limit = request.form['data_limit']
+        plan.offer = request.form.get('offer', '')
+        db.session.commit()
+        flash('User\'s plan customized successfully!', 'success')
+        return redirect(url_for('admin_user_subscriptions', user_id=subscription.user_id))
+    return render_template('customize_user_subscription.html', plan=plan, subscription=subscription, user=user)
 
 @app.context_processor
 def inject_models():

@@ -42,7 +42,10 @@
             <td>{{ plan.data_limit }} GB</td>
             <td>{{ plan.offer or 'No Offer' }}</td>
             <td>
-                <a href="{{ url_for('edit_plan', plan_id=plan.id) }}">Edit</a>
+                <div class="plan-actions" style="display: flex; flex-direction: column; gap: 10px;">
+                    <a href="{{ url_for('edit_plan', plan_id=plan.id) }}">Edit</a>
+                    <a href="{{ url_for('customize_plan', plan_id=plan.id) }}">Customize</a>
+                </div>
                 <form method="POST" action="{{ url_for('delete_plan', plan_id=plan.id) }}" style="display:inline;">
                     <button type="submit">Delete</button>
                 </form>

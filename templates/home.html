@@ -7,8 +7,6 @@
 
 {% if user %}
 <p>Hello, {{ user.username }}!</p>
-<a href="{{ url_for('profile') }}">View Profile</a> |
-<a href="{{ url_for('logout') }}">Logout</a>
 {% else %}
 <p>Please <a href="{{ url_for('login') }}">Login</a> or <a href="{{ url_for('register') }}">Register</a> to continue.
 </p>

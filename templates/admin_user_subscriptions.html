@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}User Subscriptions{% endblock %}
+{% block content %}
+<h1>Subscriptions for {{ user.username }}</h1>
+{% if subscriptions %}
+<table class="user_table">
+    <thead>
+        <tr>
+            <th>Plan Name</th>
+            <th>Price</th>
+            <th>Speed</th>
+            <th>Data Limit</th>
+            <th>Status</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sub in subscriptions %}
+        {% set plan_list = plans | selectattr('id', 'equalto', sub.plan_id) | list %}
+        {% if plan_list %}
+        {% set plan = plan_list[0] %}
+        <tr>
+            <td>{{ plan.name }}</td>
+            <td>₹{{ plan.price }}</td>
+            <td>{{ plan.speed }} Mbps</td>
+            <td>{{ plan.data_limit }} GB</td>
+            <td>{{ sub.status }}</td>
+            <td>{{ sub.start_date }}</td>
+            <td>{{ sub.end_date }}</td>
+            <td>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="{{ url_for('admin_edit_user_subscription', subscription_id=sub.id) }}">Edit</a>
+                    <a href="{{ url_for('customize_user_subscription', subscription_id=sub.id) }}">Customize Plan</a>
+                </div>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="8">Plan not found (ID: {{ sub.plan_id }})</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No subscriptions for this user.</p>
+{% endif %}
+{% endblock %}
